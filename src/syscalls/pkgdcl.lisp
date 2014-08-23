@@ -99,12 +99,12 @@
    #:ehostunreach #:eidrm #:eilseq #:einprogress #:eintr #:einval #:eio
    #:eisconn #:eisdir #:eloop #:emfile #:emlink #:emsgsize #:emultihop
    #:enametoolong #:enetdown #:enetreset #:enetunreach #:enfile
-   #:enobufs #:enodata #:enodev #:enoent #:enoexec #:enolck #:enolink
-   #:enomem #:enomsg #:enonet #:enoprotoopt #:enospc #:enosr #:enostr
+   #:enobufs #-dragonfly #:enodata #:enodev #:enoent #:enoexec #:enolck #:enolink
+   #:enomem #:enomsg #:enonet #:enoprotoopt #:enospc #-dragonfly #:enosr #-dragonfly #:enostr
    #:enosys #:enotconn #:enotdir #:enotempty #:enotsock #:enotsup #:enotty
    #:enxio #:eopnotsupp #:eoverflow #:eperm #:epipe #:eproto
    #:eprotonosupport #:eprototype #:erange #:erofs #:eshutdown #:espipe
-   #:esrch #:estale #:etime #:etimedout #:etxtbsy #:ewouldblock #:exdev
+   #:esrch #:estale #-dragonfly #:etime #:etimedout #:etxtbsy #:ewouldblock #:exdev
    #:ebug)
   (:export ;; fcntl.h
    ;; Open()
@@ -523,7 +523,8 @@
    #:ioctl
    #:fd-cloexec-p
    #:fd-nonblock-p
-   #:fd-open-p)
+   #:fd-open-p
+   #:fd-tty-p)
   (:export ;; TTYs
    #:openpt
    #:grantpt

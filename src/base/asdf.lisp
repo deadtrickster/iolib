@@ -12,12 +12,16 @@
 (in-package :iolib.asdf)
 
 (defun compile-wrapper (continuation)
-  (let (;; Compilation fails because of CFFI types that
-        ;; can't be printed readably, so bind to NIL
-        (*print-readably* nil)
-        (*readtable* (copy-readtable))
-        (asdf/lisp-build:*uninteresting-compiler-conditions*
-          '(#+sbcl sb-int:package-at-variance))
-        (asdf/lisp-build:*uninteresting-loader-conditions*
-          '(#+sbcl sb-int:package-at-variance)))
-    (funcall continuation)))
+  (let ((*readtable* (copy-readtable))
+        (uiop:*uninteresting-compiler-conditions*
+          (append '(#+sbcl sb-int:package-at-variance)
+                  uiop:*uninteresting-compiler-conditions*)))
+    (multiple-value-bind (symbols values)
+        (if (find-package :cffi)
+            (values (find-symbol #.(string '#:*foreign-library-directories*) :cffi) '(nil))
+            (values nil nil))
+      (with-standard-io-syntax
+        (let (;; Compilation fails because of CFFI types that
+              ;; can't be printed readably, so bind to NIL
+              (*print-readably* nil))
+          (funcall continuation))))))

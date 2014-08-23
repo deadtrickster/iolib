@@ -9,7 +9,9 @@
 ;;;        instead of hard-coding them
 #+linux
 (progn
+  (c "#if !defined(_GNU_SOURCE)")
   (define "_GNU_SOURCE")
+  (c "#endif // _GNU_SOURCE")
   (define "_LARGEFILE_SOURCE")
   (define "_LARGEFILE64_SOURCE")
   (define "_FILE_OFFSET_BITS" 64))
@@ -105,7 +107,7 @@
  (:enetunreach "ENETUNREACH")
  (:enfile "ENFILE")
  (:enobufs "ENOBUFS")
- (:enodata "ENODATA")
+ (:enodata "ENODATA" :optional t)
  (:enodev "ENODEV")
  (:enoent "ENOENT")
  (:enoexec "ENOEXEC")
@@ -116,8 +118,8 @@
  (:enonet "ENONET" :optional t)
  (:enoprotoopt "ENOPROTOOPT")
  (:enospc "ENOSPC")
- (:enosr "ENOSR")
- (:enostr "ENOSTR")
+ (:enosr "ENOSR" :optional t)
+ (:enostr "ENOSTR" :optional t)
  (:enosys "ENOSYS")
  (:enotconn "ENOTCONN")
  (:enotdir "ENOTDIR")
@@ -139,7 +141,7 @@
  (:espipe "ESPIPE")
  (:esrch "ESRCH")
  (:estale "ESTALE")
- (:etime "ETIME")
+ (:etime "ETIME" :optional t)
  (:etimedout "ETIMEDOUT")
  (:etxtbsy "ETXTBSY")
  (:ewouldblock "EWOULDBLOCK")
@@ -470,7 +472,7 @@
   (constant (rlimit-rtprio "RLIMIT_RTPRIO"))
   (constant (rlimit-sigpending "RLIMIT_SIGPENDING")))
 
-#+freebsd
+#+(or dragonfly freebsd)
 (constant (rlimit-sbsize "RLIMIT_SBSIZE"))
 
 
