@@ -87,15 +87,13 @@
   :licence "MIT"
   :version (:read-file-form "version.lisp-expr")
   :defsystem-depends-on (:iolib/asdf :iolib/conf)
-  :depends-on (:alexandria
-               #+allegro (:require "osi")
-               :cffi :iolib/asdf :iolib/conf)
+  :depends-on (:iolib/asdf :iolib/conf
+               :alexandria #+allegro (:require "osi") :cffi :uiop)
   :around-compile "iolib/asdf:compile-wrapper"
   :encoding :utf-8
   :pathname "src/grovel/"
   :components
   ((:file "package")
-   (:file "invoke")
    (:static-file "grovel-common.h")
    (:file "grovel")
    (:file "asdf"))

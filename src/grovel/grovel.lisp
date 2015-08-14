@@ -40,7 +40,29 @@
   "Coerce S to a string, making sure that it returns an extended string"
   (map 'string #'identity (string s)))
 
+;;; Do we really want to suppress the output by default?
+(defun invoke (command &rest args)
+  (when (pathnamep command)
+    (setf command (cffi-sys:native-namestring command)))
+  (format *debug-io* "; ~A~{ ~A~}~%" command args)
+  (multiple-value-bind (output stderr exit-code)
+      (uiop:run-program (list* command args) :output :string)
+    (declare (ignore stderr))
+    (unless (zerop exit-code)
+      (grovel-error "External process exited with code ~S.~@
+                     Command was: ~S~{ ~S~}~@
+                     Output was:~%~A"
+                    exit-code command args output))
+    output))
+
 ;;;# Error Conditions
+
+(define-condition grovel-error (simple-error) ())
+
+(defun grovel-error (format-control &rest format-arguments)
+  (error 'grovel-error
+         :format-control format-control
+         :format-arguments format-arguments))
 
 ;;; This warning is signalled when iolib-grovel can't find some macro.
 ;;; Signalled by CONSTANT or CONSTANTENUM.
@@ -168,7 +190,7 @@ int main(int argc, char**argv) {
 (defgeneric %process-grovel-form (name out arguments)
   (:method (name out arguments)
     (declare (ignore out arguments))
-    (error "Unknown Grovel syntax: ~S" name)))
+    (grovel-error "Unknown Grovel syntax: ~S" name)))
 
 (defun process-grovel-form (out form)
   (%process-grovel-form (form-kind form) out (cdr form)))
@@ -610,7 +632,7 @@ int main(int argc, char**argv) {
 (defgeneric %process-wrapper-form (name out arguments)
   (:method (name out arguments)
     (declare (ignore out arguments))
-    (error "Unknown Grovel syntax: ~S" name)))
+    (grovel-error "Unknown Grovel syntax: ~S" name)))
 
 ;;; OUT is lexically bound to the output stream within BODY.
 (defmacro define-wrapper-syntax (name lambda-list &body body)
